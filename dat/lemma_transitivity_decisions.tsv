@@ -1,126 +1,181 @@
-lemma	claude_call	your_call
-adakozik	no_object	object
-aggódik	no_object	
-akadékoskodik	no_object	
-alacsonyodik	no_object	
-alszik	no_object	object
-aszik	no_object	
-bizonyosodik	no_object	
-bomlik	no_object	
-bonyolódik	no_object	
-botlik	no_object	
-bámészkodik	no_object	
-bűvészkedik	no_object	
-bűzlik	no_object	
-csalódik	no_object	
-csapódik	no_object	
-csatlakozik	no_object	
-csetlik	no_object	
-csuklik	no_object	
-csúszik	no_object	
-dicsekszik	no_object	
-dumcsizik	no_object	
-döglik	no_object	
-egyezkedik	no_object	
-elhajlik	no_object	
-fejlődik	no_object	
-fohászkodik	no_object	
-fuldoklik	no_object	
-furikázik	no_object	object
-futkorászik	no_object	
-fénylik	no_object	
-gyanakszik	no_object	
-hadonászik	no_object	
-hagyatkozik	no_object	
-hahotázik	no_object	
-hajlik	no_object	
-haldoklik	no_object	
-hangolódik	no_object	
-hanyatlik	no_object	
-haragszik	no_object	
-hasonlik	no_object	
-heverészik	no_object	
-hugyozik	no_object	object
-hízik	no_object	
-húzódik	no_object	
-hüledezik	no_object	
-idősödik	no_object	
-igyekszik	no_object	object
-iparkodik	no_object	
-ismerkedik	no_object	
-jógázik	no_object	
-kapaszkodik	no_object	
-koncertezik	no_object	
-kotlik	no_object	object
-készülődik	no_object	
-kúszik	no_object	
-különbözik	no_object	
-küszködik	no_object	
-malmozik	no_object	
-meghajlik	no_object	
-mosdik	no_object	
-mosolyodik	no_object	
-mozizik	no_object	object
-múlik	no_object	
-nedvesedik	no_object	
-nyugszik	no_object	
-nyílik	no_object	
-ocsúdik	no_object	
-omlik	no_object	
-orientálódik	no_object	
-pihizik	no_object	
-poénkodik	no_object	
-rohangászik	no_object	
-romlik	no_object	
-rugaszkodik	no_object	
-siklik	no_object	
-szaglik	no_object	
-szedelőzködik	no_object	
-szemlélődik	no_object	
-színészkedik	no_object	
-születik	no_object	
-taktikázik	no_object	
-telítődik	no_object	
-tornászik	no_object	
-tornázik	no_object	
-tudódik	no_object	
-távolodik	no_object	
-töltődik	no_object	
-törekszik	no_object	object
-törődik	no_object	
-tündöklik	no_object	
-utazik	no_object	
-vesződik	no_object	
-vetemedik	no_object	
-viccelődik	no_object	
-visszakozik	no_object	
-vitorlázik	no_object	
-vizsgálódik	no_object	
-vonaglik	no_object	
-vágódik	no_object	
-válik	no_object	
-vívódik	no_object	
-vörösödik	no_object	
-zajlik	no_object	
-zárkózik	no_object	
-zötykölődik	no_object	
-állapodik	no_object	
-építkezik	no_object	
-érdeklődik	no_object	
-öltözködik	no_object	
-öregszik	no_object	
-ügyeskedik	no_object	
-ügyködik	no_object	
-baszik	object_capable	
-bogarászik	object_capable	
-cselekszik	object_capable	
-dudorászik	object_capable	
-fekszik	object_capable	no_object
-hazudozik	object_capable	
-kotorászik	object_capable	
-pakolászik	object_capable	
-teázik	object_capable	no_object
-tojik	object_capable	
-toszik	object_capable	
-étkezik	object_capable	
-úszik	object_capable	
+lemma	claude_call	carried_over	your_call
+autózik	no_object	FALSE	
+betegeskedik	no_object	FALSE	
+betegszik	no_object	FALSE	
+bíbelődik	no_object	FALSE	
+bölcselkedik	no_object	FALSE	
+büszkélkedik	no_object	FALSE	
+dicsekszik	no_object	FALSE	
+dudorászik	no_object	FALSE	object
+elégszik	no_object	FALSE	
+emlékszik	no_object	FALSE	
+erőlködik	no_object	FALSE	
+esik	no_object	FALSE	
+fukarkodik	no_object	FALSE	
+gyanakszik	no_object	FALSE	
+haragszik	no_object	FALSE	
+irigykedik	no_object	FALSE	
+kérdezősködik	no_object	FALSE	
+kötődik	no_object	FALSE	
+lázadozik	no_object	FALSE	
+magyarázkodik	no_object	FALSE	object
+melegszik	no_object	FALSE	
+méhészkedik	no_object	FALSE	
+növekszik	no_object	FALSE	
+pipiskedik	no_object	FALSE	
+rejtőzködik	no_object	FALSE	
+rázkódik	no_object	FALSE	
+szitkozódik	no_object	FALSE	
+szándékozik	no_object	FALSE	object
+sóhajtozik	no_object	FALSE	object
+tanakodik	no_object	FALSE	
+telepszik	no_object	FALSE	
+tornászik	no_object	FALSE	
+tájékozódik	no_object	FALSE	
+táplálkozik	no_object	FALSE	
+tépelődik	no_object	FALSE	
+töltődik	no_object	FALSE	
+törődik	no_object	FALSE	
+undorodik	no_object	FALSE	
+veszekszik	no_object	FALSE	
+vetődik	no_object	FALSE	
+viaskodik	no_object	FALSE	
+vigasztalódik	no_object	FALSE	
+vonzódik	no_object	FALSE	
+vágyakozik	no_object	FALSE	object
+vágyódik	no_object	FALSE	
+várakozik	no_object	FALSE	
+vörösödik	no_object	FALSE	
+zötykölődik	no_object	FALSE	
+zúgolódik	no_object	FALSE	
+ütközik	no_object	FALSE	object
+őrködik	no_object	FALSE	
+őrlődik	no_object	FALSE	
+cigarettázik	object_capable	FALSE	no_object
+cselekszik	object_capable	FALSE	
+igyekszik	object_capable	FALSE	
+kaparászik	object_capable	FALSE	
+törekszik	object_capable	FALSE	
+élvezkedik	object_capable	FALSE	no_object
+ellik	EXCLUDE_data_quality	TRUE	
+illik	exclude (Illek surname + illem noun homograph, both -k and -m contaminated)	TRUE	
+telik	exclude (telo/phone slang noun homograph, both -k telok and -m telom contaminated)	TRUE	
+alacsonyodik	no_object	TRUE	
+alakoskodik	no_object	TRUE	
+bakizik	no_object	TRUE	
+baszakodik	no_object	TRUE	
+bomlik	no_object	TRUE	
+botlik	no_object	TRUE	
+bálozik	no_object	TRUE	
+bátortalanodik	no_object	TRUE	
+büfizik	no_object	TRUE	
+bűzlik	no_object	TRUE	
+csetlik	no_object	TRUE	
+csipkelődik	no_object	TRUE	
+csuklik	no_object	TRUE	
+dumcsizik	no_object	TRUE	
+döglik	no_object	TRUE	
+elhajlik	no_object	TRUE	
+elszörnyülködik	no_object	TRUE	
+elégedetlenkedik	no_object	TRUE	
+előrehajlik	no_object	TRUE	
+emelkedik	no_object	TRUE	
+enyészik	no_object	TRUE	
+feldobódik	no_object	TRUE	
+fogócskázik	no_object	TRUE	
+fuldoklik	no_object	TRUE	
+féltékenykedik	no_object	TRUE	
+fénylik	no_object	TRUE	
+fürdik	no_object	TRUE	
+gyűlik	no_object	TRUE	
+gúnyolódik	no_object	TRUE	
+hadonászik	no_object	TRUE	
+hajlik	no_object	TRUE	
+haldoklik	no_object	TRUE	
+hanyatlik	no_object	TRUE	
+hapcizik	no_object	TRUE	
+hasonlik	no_object	TRUE	
+haverkodik	no_object	TRUE	
+heverészik	no_object	TRUE	
+hullámzik	no_object	TRUE	
+háborodik	no_object	TRUE	
+hámlik	no_object	TRUE	
+informálódik	no_object	TRUE	
+kacarászik	no_object	TRUE	
+kapálózik	no_object	TRUE	
+kerekedik	no_object	TRUE	
+kereskedik	no_object	TRUE	
+keseredik	no_object	TRUE	
+keveredik	no_object	TRUE	
+kezdődik	no_object	TRUE	
+kihajlik	no_object	TRUE	
+korizik	no_object	TRUE	
+kotlik	no_object	TRUE	
+kétségbeesik	no_object	TRUE	
+különbözik	no_object	TRUE	
+lehajlik	no_object	TRUE	
+leledzik	no_object	TRUE	
+megfeneklik	no_object	TRUE	
+meghajlik	no_object	TRUE	
+mozgolódik	no_object	TRUE	
+méltóztatik	no_object	TRUE	
+nekiveselkedik	no_object	TRUE	
+nyargalászik	no_object	TRUE	
+nyílik	no_object	TRUE	
+okvetetlenkedik	no_object	TRUE	
+omlik	no_object	TRUE	
+oszlik	no_object	TRUE	
+parázslik	no_object	TRUE	
+pendlizik	no_object	TRUE	
+piroslik	no_object	TRUE	
+pofátlankodik	no_object	TRUE	
+romlik	no_object	TRUE	
+rökönyödik	no_object	TRUE	
+sorakozik	no_object	TRUE	
+spurizik	no_object	TRUE	
+szaglik	no_object	TRUE	
+szerződik	no_object	TRUE	
+sziesztázik	no_object	TRUE	
+szomorodik	no_object	TRUE	
+szökik	no_object	TRUE	
+sürgölődik	no_object	TRUE	
+trágárkodik	no_object	TRUE	
+távozik	no_object	TRUE	
+töketlenkedik	no_object	TRUE	
+történik	no_object	TRUE	
+tündöklik	no_object	TRUE	
+verődik	no_object	TRUE	
+vihorászik	no_object	TRUE	
+visszahajlik	no_object	TRUE	
+vonaglik	no_object	TRUE	
+vonatozik	no_object	TRUE	
+vágtázik	no_object	TRUE	
+vásik	no_object	TRUE	
+védekezik	no_object	TRUE	
+zajlik	no_object	TRUE	
+züllik	no_object	TRUE	
+ájuldozik	no_object	TRUE	
+áramlik	no_object	TRUE	
+érdeklődik	no_object	TRUE	
+bratyizik	object	TRUE	
+mocskolódik	object	TRUE	
+nyűglődik	object	TRUE	
+vedlik	object	TRUE	
+építkezik	object	TRUE	
+baszik	object_capable	TRUE	
+bogarászik	object_capable	TRUE	
+bűvészkedik	object_capable	TRUE	
+cipekedik	object_capable	TRUE	
+csokizik	object_capable	TRUE	
+fecserészik	object_capable	TRUE	
+hazudik	object_capable	TRUE	
+hugyozik	object_capable	TRUE	
+jégkorongozik	object_capable	TRUE	
+kártyázik	object_capable	TRUE	
+kászálódik	object_capable	TRUE	
+mailezik	object_capable	TRUE	
+malmozik	object_capable	TRUE	
+orvhalászik	object_capable	TRUE	
+siklik	object_capable	TRUE	
+teniszezik	object_capable	TRUE	
+táviratozik	object_capable	TRUE	
