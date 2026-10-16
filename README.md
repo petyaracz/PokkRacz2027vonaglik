@@ -25,23 +25,26 @@ What do? Use context to disambiguate instead of trusting the tag. Reading a KWIC
    - The MNSZ export's context window is genuinely short (median ~10 characters each side, max 24) — some indefinite calls are hitting a real information ceiling, not a gap the heuristic could close.
    - Writes `dat/objcap_rows_classified.tsv` (one row per classified `-m` hit).
 6. **`script/build_judged_concordance.R`** — merges the classification back onto the *entire* original concordance (both `-k` and `-m`, every lemma including excluded ones, labelled with the exclusion reason) for manual spot-checking. Writes `dat/concordance_mnsz2_judged.tsv`. Row-matched via a stable `row_id`, not by content columns — a small number of `(Reference,Left,KWIC,Right,lemma)` tuples are genuine duplicate corpus hits, and a content-based join either drops too many or too few of them.
-7. **`script/tally_verbs.R`** — drops the excluded lemmas and the rows classified definite (matched by `row_id`, same reasoning as step 6), deduplicates the sample metadata by lemma (see step 1 — a lemma can have two attested `-k` stem variants and otherwise gets joined in twice), tallies `-k` vs `-m` per lemma, joins frequency and suffix-class metadata, computes `p_k` and the `-k`/`-m` log-odds. Writes `dat/sample_counts.tsv`.
+7. **`script/tally_verbs.R`** — drops the excluded lemmas and the rows classified definite (matched by `row_id`, same reasoning as step 6), deduplicates the sample metadata by lemma (see step 1 — a lemma can have two attested `-k` stem variants and otherwise gets joined in twice), tallies `-k` vs `-m` per lemma, joins frequency and suffix-class metadata, computes `p_k` and the `-k`/`-m` log-odds. Writes `dat/sample_counts.tsv` (177 lemmas this round, unevenly split across suffix classes: `lik` 35, `odik` 40, `stem` 38, `szik` 25, `zik` 39).
+8. **`script/sample_down_concordance.R`** — balances the tally down to the same number of lemmas per suffix class (25, matching the smallest, `-szik`), so the model isn't comparing a 25-verb class against a 40-verb one. Also recomputes `log_1sg` (log frequency of the specific 1sg form) directly from `verbs.tsv` with `summarise(freq = sum(freq), .by = ...)`, which sums frequency across a lemma's two stem variants (see step 1) rather than arbitrarily keeping one — a cleaner fix for the same duplication issue than step 7's `distinct()`, since it doesn't discard either variant's token count. Writes `dat/final_counts.tsv` (125 lemmas, 25 per class).
 
 ## Results
 
-`script/analysis_verbs.R` fits a Bayesian mixed-effects logistic regression (`rstanarm::stan_glmer`, 4 chains × 4000 iterations) on `dat/sample_counts.tsv`: `cbind(k,m) ~ suffix + log_1sg + llfpm10 + (1|lemma)`. The outcome is each verb's `-k` vs `-m` count; suffix class is the predictor of interest, `log_1sg` (log frequency of the specific 1sg form) and `llfpm10` (log lemma frequency, per million) are included as controls, and a per-lemma random intercept absorbs individual-verb variation so the suffix comparison isn't driven by a handful of extreme items. `emmeans::emmeans()` + `tidybayes::gather_emmeans_draws()` give the full posterior distribution of the marginal log-odds of `-k` for each suffix class, plotted as a half-eye (`viz/bayes_halfeye_suffix.png`) rather than collapsed to a point estimate.
+`script/analysis_verbs.R` fits a Bayesian mixed-effects logistic regression (`rstanarm::stan_glmer`, 4 chains × 4000 iterations) on `dat/final_counts.tsv`: `cbind(k,m) ~ suffix + log_1sg + llfpm10 + (1|lemma)`. The outcome is each verb's `-k` vs `-m` count; suffix class is the predictor of interest, `log_1sg` and `llfpm10` (log lemma frequency, per million) are included as controls, and a per-lemma random intercept absorbs individual-verb variation so the suffix comparison isn't driven by a handful of extreme items. `emmeans::emmeans()` + `tidybayes::gather_emmeans_draws()` give the full posterior distribution of the marginal log-odds of `-k` for each suffix class, plotted as a half-eye (`viz/bayes_halfeye_suffix.png`) rather than collapsed to a point estimate.
 
-On the current 177-lemma sample (`lik` 35, `odik` 40, `stem` 38, `szik` 25, `zik` 39), `-lik` sits clearly apart from every other class:
+On the balanced 125-lemma sample (25 per suffix class), converged cleanly (max R̂ 1.01, min ESS 722/1600, 0 parameters over threshold, 0 divergent transitions). `-lik` sits clearly apart from every other class, and with equal group sizes the remaining four are even more tightly clustered than in the unbalanced 177-lemma version:
 
 | suffix | median p(-k) | 95% CI |
 |---|---|---|
-| `-lik` | 0.89 | [0.78, 0.94] |
-| `-zik` | 0.37 | [0.24, 0.53] |
-| `-odik/edik/ödik` | 0.37 | [0.24, 0.52] |
-| `csak tő` | 0.34 | [0.21, 0.49] |
-| `-szik` | 0.25 | [0.14, 0.43] |
+| `-lik` | 0.89 | [0.76, 0.96] |
+| `-zik` | 0.36 | [0.20, 0.56] |
+| `csak tő` | 0.36 | [0.20, 0.56] |
+| `-odik/edik/ödik` | 0.34 | [0.18, 0.55] |
+| `-szik` | 0.32 | [0.16, 0.54] |
 
-`-lik` verbs level to `-k` far more than any other class; the other four overlap substantially. A previous round (before the `subset_verbs.R` fix described in step 1) found `-szik` anomalously elevated (≈0.72, close to `-lik`) — that round's `-szik` sample was missing exactly the heavily `-m`-biased verbs the bug was dropping (`cselekszik`, `igyekszik`, `emlékszik`, `haragszik`...). With those verbs restored, `-szik` sits at the low end of the pack instead, closer to the pattern from the very first round. The earlier elevated estimate should be treated as a sampling artifact, not a real effect.
+`-lik` verbs level to `-k` far more than any other class; the other four now overlap almost completely (32–36%), the cleanest version of this result so far. A previous round (before the `subset_verbs.R` fix described in step 1) found `-szik` anomalously elevated (≈0.72, close to `-lik`) — that round's `-szik` sample was missing exactly the heavily `-m`-biased verbs the bug was dropping (`cselekszik`, `igyekszik`, `emlékszik`, `haragszik`...). With those verbs restored and the sample balanced, `-szik` sits with the other three at the low end instead. The earlier elevated estimate should be treated as a sampling artifact, not a real effect.
+
+Worth flagging: the covariate estimates moved too. `llfpm10` (lemma frequency) now has a clearly credible *negative* effect (−0.98, 95% CI [−1.45, −0.52], from `dat/best_model_summary.tsv`) where earlier rounds found no credible effect either direction — more frequent lemmas now favour `-m` more, holding suffix class constant. `log_1sg` is small and sits close to zero (−0.28, [−0.56, 0.01]). These shifted because the sample composition changed substantially (the `subset_verbs.R` fix, then balancing); worth a sanity check before leaning on them in the text, since neither is the paper's main claim.
 
 ## Directories
 
