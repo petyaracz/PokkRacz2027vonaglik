@@ -20,7 +20,7 @@
 # mangled "ellen"/proper noun, not the verb) -- those are dropped entirely, not just marked
 # indefinite.
 
-setwd('~/Github/RaczPokk2027/')
+setwd('~/Github/PokkRacz2027vonaglik/')
 
 library(tidyverse)
 

@@ -2,7 +2,7 @@
 
 set.seed(1337)
 
-setwd('~/Github/RaczPokk2027/')
+setwd('~/Github/PokkRacz2027vonaglik/')
 
 library(tidyverse)
 

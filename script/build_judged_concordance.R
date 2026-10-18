@@ -4,7 +4,7 @@
 # excluded ones), with the definiteness judgement attached, for manual review of the whole
 # pipeline rather than just the subset that triggered a "definite" call.
 
-setwd('~/Github/RaczPokk2027/')
+setwd('~/Github/PokkRacz2027vonaglik/')
 
 library(tidyverse)
 
