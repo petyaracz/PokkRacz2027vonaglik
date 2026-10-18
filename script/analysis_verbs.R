@@ -42,6 +42,14 @@ broom.mixed::tidy(blm1, conf.int = T, conf.level = .95) |>
   mutate_if(is.double, ~ round(., 2)) |> 
   write_tsv('dat/best_model_summary.tsv')
 
+bayes_draws |> 
+  summarise(
+    q1 = list(posterior::quantile2(.value))[[1]][1],
+    q2 = list(posterior::quantile2(.value))[[1]][2],
+    p1 = plogis(q1),
+    p2 = plogis(q2)
+  ) 
+
 bayes_draws |>
   mutate(suffix = factor(suffix, levels = rev(names(suffix_labels)), labels = rev(suffix_labels))) |>
   ggplot(aes(.value, suffix)) +
