@@ -30,3 +30,4 @@ p1 = all |>
   ylab('mennyiség (webkorpusz)')
 
 ggsave('viz/counts.png', width = 6, height = 4, dpi = 900)
+ggsave('viz/counts.pdf', width = 6, height = 4)

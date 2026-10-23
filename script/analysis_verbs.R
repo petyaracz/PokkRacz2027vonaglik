@@ -9,6 +9,10 @@ set.seed(1337)
 # -- read -- #
 
 d = read_tsv('dat/final_counts.tsv')
+
+# blm1 = rstanarm::stan_glmer(cbind(k,m) ~ suffix + log_1sg + llfpm10 + (1|lemma), family = binomial, data = d, chains = 4, iter = 4000)
+# 
+# write_rds(blm1, 'fits/blm1.rds')
 blm1 = read_rds('fits/blm1.rds')
 
 # -- labs -- #
@@ -23,10 +27,6 @@ suffix_labels = c(
 )
 
 # -- bayes -- #
-
-# blm1 = rstanarm::stan_glmer(cbind(k,m) ~ suffix + log_1sg + llfpm10 + (1|lemma), family = binomial, data = d, chains = 4, iter = 4000)
-# 
-# write_rds(blm1, 'fits/blm1.rds')
 
 rstanarm::prior_summary(blm1)
 
@@ -62,7 +62,7 @@ bayes_draws |>
   labs(x = 'log (-k / -m)', y = NULL) +
   theme_bw()
 ggsave('viz/bayes_halfeye_suffix.png', width = 5, height = 4)
-
+ggsave('viz/bayes_halfeye_suffix.pdf', width = 5, height = 4)
 
 # ---
 library(posterior)

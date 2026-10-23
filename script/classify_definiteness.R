@@ -47,9 +47,16 @@ exclude_lemmas = decisions |>
 # of surface-form matching that a real morphological parse would be needed to fix properly.
 # nézelődik/szerencsétlenkedik/érdeklődik/kínlódik/alakoskodik/lábatlankodik/közlekedik/
 # hülyéskedik are oblique-governing even with a preverb attached (unlike alszik/szokik, whose
-# preverbed forms do take accusative objects -- see the particle_gap preverb list below)
+# preverbed forms do take accusative objects -- see the particle_gap preverb list below).
+# igyekszik only ever takes an infinitival complement ("igyekszem megnézni"), never a direct
+# object itself; its false "definite" hits are the complement's own object sitting right next to
+# it ("igyekszem az embereket jól megnézni" -- the real definite verb, if any, is "megnézni"/
+# "megnézem", not igyekszem). esik is idiom/oblique-only ("kétségbe esik", "jól esik") and never
+# takes a direct accusative object; its false hits are an accusative noun belonging to an
+# unrelated clause nearby, not to esik.
 always_indefinite = c('tartozik', 'nézelődik', 'szerencsétlenkedik', 'érdeklődik', 'kínlódik',
-                       'alakoskodik', 'lábatlankodik', 'közlekedik', 'hülyéskedik')
+                       'alakoskodik', 'lábatlankodik', 'közlekedik', 'hülyéskedik',
+                       'igyekszik', 'esik')
 
 pairs = samp |>
   filter(!lemma %in% exclude_lemmas) |>
@@ -108,18 +115,41 @@ rows = rows |>
     flag_pronoun_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\b(azt|ezt|őt|ugyanazt|mindezt|mindazt|magamat)\\b')), FALSE),
 
     # interrogative, relative, and indefinite accusative pronouns (mit/kit "what/whom", amit/akit
-    # "which/who [relative]", valamit/valakit/semmit/senkit/mindenkit/egyet "something/someone/
-    # nothing/nobody/everyone/one [of them]") force indefinite regardless of any other signal:
-    # none of these can co-occur with definite conjugation (they're all non-specific referents),
-    # so an -ik verb's -m form here is a genuine indefinite token (via the -k/-m levelling this
-    # whole project studies), not evidence of definiteness. getting this backwards for mit/kit
-    # would have thrown away exactly the indefinite-m data points the project most wants to keep
-    flag_interrog_L = replace_na(str_detect(str_to_lower(last_toks), '\\b(mit|kit|amit|akit|valamit|valakit|semmit|senkit|mindenkit|egyet)\\b\\s*$'), FALSE),
-    flag_interrog_R = replace_na(str_detect(str_to_lower(first_toks), '^\\s*(mit|kit|amit|akit|valamit|valakit|semmit|senkit|mindenkit|egyet)\\b'), FALSE),
+    # "which/who [relative]", amelyet/amelyeket the formal-register "amely" sibling of amit,
+    # valamit/valakit/semmit/senkit/mindenkit/egyet "something/someone/nothing/nobody/everyone/one
+    # [of them]") force indefinite regardless of any other signal: none of these can co-occur with
+    # definite conjugation (they're all non-specific referents), so an -ik verb's -m form here is
+    # a genuine indefinite token (via the -k/-m levelling this whole project studies), not
+    # evidence of definiteness. getting this backwards for mit/kit would have thrown away exactly
+    # the indefinite-m data points the project most wants to keep. amelyet/amelyeket added after
+    # a confirmed miss: "fürdöm ... amelyeket kellő nyájassággal fogadok" -- the accusative
+    # belongs to the relative clause's own verb (fogadok), not to fürdöm
+    flag_interrog_L = replace_na(str_detect(str_to_lower(last_toks), '\\b(mit|kit|amit|akit|amelyet|amelyeket|valamit|valakit|semmit|senkit|mindenkit|egyet)\\b\\s*$'), FALSE),
+    flag_interrog_R = replace_na(str_detect(str_to_lower(first_toks), '^\\s*(mit|kit|amit|akit|amelyet|amelyeket|valamit|valakit|semmit|senkit|mindenkit|egyet)\\b'), FALSE),
 
-    # definite article + accusative-marked noun, checked on both sides of the verb
-    flag_art_acc_L = replace_na(str_detect(str_to_lower(last_toks), paste0('\\b(a|az)\\s+', adj_gap, '\\S*[aeiouáéíóöőúüű]t\\b', particle_gap_end)), FALSE),
-    flag_art_acc_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\b(a|az)\\s+', adj_gap, '\\S*[aeiouáéíóöőúüű]t\\b')), FALSE),
+    # sentence-initial discourse connectives that happen to end in vowel+t (sőt "moreover", tehát
+    # "therefore", hát "well") and bare quantity/degree accusative ADVERBIALS (sokat "a lot",
+    # kicsit "a little", nagyot "greatly", mélyeket "deeply", hangosat "loudly", keveset
+    # "little", ennyit/annyit "this/that much", rengeteget "a ton") don't correlate with
+    # definite conjugation at all despite ending in the same shape; this stoplist is necessarily
+    # incomplete (degree-adverbial formation from adjectives is open-class), a known limitation
+    capital_stop = '(sőt|tehát|hát|sokat|kicsit|nagyot|mélyeket|mélyet|hangosat|keveset|ennyit|annyit|rengeteget)',
+    flag_capital_stop_L = replace_na(str_detect(str_to_lower(last_toks), paste0('\\b', capital_stop, '\\b\\s*$')), FALSE),
+    flag_capital_stop_R = replace_na(str_detect(str_to_lower(first_toks), paste0('^\\s*', capital_stop, '\\b')), FALSE),
+
+    # words that end in vowel+t but can never be the article's accusative-marked noun:
+    # capital_stop's degree adverbials plus "legtöbbet" (missing from that list), the frequency
+    # adverb ismét "again", common nouns/loanwords whose BARE form coincidentally ends in -At
+    # (saját "own", üzlet "shop", szupermarket), and the interrogative/relative/indefinite
+    # pronouns from flag_interrog below (mit/kit/amit/akit/amelyet/amelyeket/valamit/valakit/
+    # semmit/senkit/mindenkit/egyet) -- excluded via a negative lookahead positioned exactly
+    # where flag_art_acc's own match lands (after the a/az + adj_gap), rather than reusing
+    # flag_capital_stop_L/R, which are anchored to the very start of the window and so miss any
+    # case where the excluded word isn't the first token ("a legtöbbet" with the article first,
+    # "a hajlongásokban , amelyeket" with two words in between -- confirmed misses without this)
+    art_acc_stop = '(sőt|tehát|hát|sokat|kicsit|nagyot|mélyeket|mélyet|hangosat|keveset|ennyit|annyit|rengeteget|legtöbbet|ismét|saját|üzlet|szupermarket|mit|kit|amit|akit|amelyet|amelyeket|valamit|valakit|semmit|senkit|mindenkit|egyet)',
+    flag_art_acc_L = replace_na(str_detect(str_to_lower(last_toks), paste0('\\b(a|az)\\s+', adj_gap, '(?!\\b', art_acc_stop, '\\b)\\S*[aeiouáéíóöőúüű]t\\b', particle_gap_end)), FALSE),
+    flag_art_acc_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\b(a|az)\\s+', adj_gap, '(?!\\b', art_acc_stop, '\\b)\\S*[aeiouáéíóöőúüű]t\\b')), FALSE),
 
     # bare common-noun accusatives, with no article and no possessive marker, do NOT trigger
     # definite conjugation ("Bokrot ugrom" = "I jump [a] bush" is indefinite, confirmed by hand)
@@ -157,15 +187,6 @@ rows = rows |>
     flag_propn_acc_R = replace_na(str_detect(first_toks, paste0(particle_gap_start, '\\b[A-ZÁÉÍÓÖŐÚÜŰ]\\S*[aeiouáéíóöőúüűAEIOUÁÉÍÓÖŐÚÜŰ]t\\b')), FALSE),
     flag_nitzschet_L = replace_na(str_detect(str_to_lower(last_toks), paste0('(nitzsét|nietzschét)\\b', particle_gap_end)), FALSE),
 
-    # sentence-initial discourse connectives that happen to end in vowel+t (sőt "moreover", tehát
-    # "therefore", hát "well") and bare quantity/degree accusative ADVERBIALS (sokat "a lot",
-    # kicsit "a little", nagyot "greatly", mélyeket "deeply", hangosat "loudly", keveset
-    # "little", ennyit/annyit "this/that much", rengeteget "a ton") don't correlate with
-    # definite conjugation at all despite ending in the same shape; this stoplist is necessarily
-    # incomplete (degree-adverbial formation from adjectives is open-class), a known limitation
-    capital_stop = '(sőt|tehát|hát|sokat|kicsit|nagyot|mélyeket|mélyet|hangosat|keveset|ennyit|annyit|rengeteget)',
-    flag_capital_stop_L = replace_na(str_detect(str_to_lower(last_toks), paste0('\\b', capital_stop, '\\b\\s*$')), FALSE),
-    flag_capital_stop_R = replace_na(str_detect(str_to_lower(first_toks), paste0('^\\s*', capital_stop, '\\b')), FALSE),
     flag_capital_acc_L = (flag_poss_acc_L | flag_nitzschet_L) & !flag_capital_stop_L,
     flag_capital_acc_R = (flag_poss_acc_R | flag_propn_acc_R) & !flag_capital_stop_R,
 
@@ -183,6 +204,19 @@ rows = rows |>
     flag_fenet_L = replace_na(str_detect(str_to_lower(last_toks), paste0('\\b(a|az)\\s+fen[ée]t\\b', particle_gap_end)), FALSE),
     flag_fenet_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\b(a|az)\\s+fen[ée]t\\b')), FALSE),
 
+    # accusative-governing converbs/postpositions ("X-et illetően/tekintve/nézve" = "regarding/
+    # concerning X") govern their own accusative complement; it isn't the -m verb's object even
+    # though it sits right next to it ("az összegeket illetően esem" -- esik never takes an
+    # object at all, "összegeket" belongs to "illetően", not to esem). same treatment as -ért
+    flag_illetoen_L = replace_na(str_detect(str_to_lower(last_toks), '\\b(illetően|illetoen|tekintve|nézve)\\b'), FALSE),
+    flag_illetoen_R = replace_na(str_detect(str_to_lower(first_toks), '^\\s*(illetően|illetoen|tekintve|nézve)\\b'), FALSE),
+
+    # "azt mond(j)a/mondják/mondta/mondták" is a fixed quotative formula: "azt" is cataphoric to
+    # the reported clause that follows, not the preceding -m verb's object ("kérdezősködöm [...]
+    # azt mondják [hogy ...]" -- kérdezősködik governs -ról/-ről, never accusative, and "azt"
+    # belongs to "mondják", not to kérdezősködöm)
+    flag_azt_mond_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\bazt\\s+mond')), FALSE),
+
     # alszik's most common transitive idiom ("alussza az almat" / "almat alszik", sleeps one's
     # sleep/dream) is a possessive-marked object with no article at all, so the flag_art_acc
     # pattern above can never catch it. narrow, lemma-specific patch rather than a general fix
@@ -191,7 +225,7 @@ rows = rows |>
     flag_almot_R = replace_na(str_detect(str_to_lower(first_toks), paste0(particle_gap_start, '\\b\u00e1lm\\w*[a\u00e1]t\\b')), FALSE),
 
     flag_definite = (flag_pronoun_L | flag_art_acc_L | flag_pronoun_R | flag_art_acc_R | flag_almot_L | flag_almot_R | flag_capital_acc_L | flag_capital_acc_R),
-    flag_false_positive = (flag_ert_L | flag_ert_R | flag_fenet_L | flag_fenet_R),
+    flag_false_positive = (flag_ert_L | flag_ert_R | flag_fenet_L | flag_fenet_R | flag_illetoen_L | flag_illetoen_R | flag_azt_mond_R),
     flag_interrog = (flag_interrog_L | flag_interrog_R),
     heuristic_call = if_else(flag_interrog, 'indefinite',
                       if_else(flag_definite & !flag_false_positive & !lemma %in% always_indefinite, 'definite', 'indefinite'))

@@ -57,20 +57,24 @@ ik = verbs |>
     !form %in% 'bányászok',
     str_detect(lemma, 'ik$'),
     xpostag == '[/V][Prs.NDef.1Sg]',
-    str_detect(form, 'k$')
+    str_detect(form, 'k$'),
+    # screens out the -m side's own homograph risk, the same way !form %in% plur screens the -k
+    # side above: horgászik's -m form "horgászom" ("I fish") is indistinguishable in Webcorpus2's
+    # own tagging from the 1sg-possessive noun "horgászom" ("my fisherman"). 13 lemmas confirmed
+    # affected this round (eszik, lakik, jelenik, fosik, adatik, fingik, rajzik, madarászik,
+    # vadászik, telik, horgászik, gombászik, hajhászik) -- none happened to land in a prior
+    # working sample, but it's a latent risk on any resample, so excluded at the source here
+    # rather than left as a diagnostic-only check
+    !str_replace(form, 'k$', 'm') %in% poss
   )
 
 # -- run -- #
 
-ik |> 
+ik |>
   count(suffix)
 
-ik |> 
-  mutate(m_version = str_replace(form, 'k$', 'm')) |> 
-  filter(!m_version %in% poss) # doesn't matter
-
-ik = ik |> 
-  group_by(suffix) |> 
+ik = ik |>
+  group_by(suffix) |>
   sample_n(40)
 
 # build one regex from the -k forms, swapping the final k for a [km] class so a literal
