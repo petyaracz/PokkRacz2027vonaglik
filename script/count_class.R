@@ -31,3 +31,32 @@ p1 = all |>
 
 ggsave('viz/counts.png', width = 6, height = 4, dpi = 900)
 ggsave('viz/counts.pdf', width = 6, height = 4)
+
+# -- moar conts -- #
+
+# in all, the number of verbs that end in bare -ol/-el/-öl
+
+all |> 
+  filter(class == 'l', !ik) |>  # 4251
+  filter(str_detect(lemma, '[oeöá]l$')) # 3324
+3324/4251
+
+all |> 
+  filter(class == 'd',!ik) |> # 153
+  filter(str_detect(lemma, 'k.d$')) # 32
+
+32/153
+
+all |> 
+  filter(class == 'd',!ik) |> # 153
+  filter(str_detect(lemma, 'ed$')) # 120
+
+120/153
+
+all |> 
+  filter(class == 'd',ik) |> # 2116
+  mutate(end = str_extract(lemma, '.dik$')) |> 
+  count(end) |> 
+  mutate(percent = n / 2116)
+
+
