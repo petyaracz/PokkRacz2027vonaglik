@@ -23,6 +23,14 @@ decisions = read_tsv('dat/lemma_transitivity_decisions.tsv') |>
 # see dat/lemma_transitivity_decisions.tsv) never belonged in the tally at all
 exclude_lemmas = decisions |> filter(str_detect(str_to_lower(final_call), 'exclude')) |> pull(lemma)
 
+# hand-checked transitivity, collapsed to a boolean predictor: TRUE for lemmas confirmed to take
+# a direct accusative object under some construction ('object' or 'object_capable'), FALSE for
+# lemmas confirmed never to ('no_object'). excluded lemmas never reach this join (dropped from
+# `d` below), so every remaining lemma resolves to exactly one of the two
+transitivity = decisions |>
+  mutate(transitive_verb = final_call %in% c('object', 'object_capable')) |>
+  select(lemma, transitive_verb)
+
 # rows the heuristic called genuinely definite: strip these out rather than tally them as -ik
 # indefinite use. dropped by row_id, not by content columns: a handful of (Reference,Left,KWIC,
 # Right,lemma) tuples are genuine duplicate corpus hits, so a content-based anti_join either
@@ -51,7 +59,8 @@ metadata = ref |>
   select(lemma, lemma_freq, corpus_size, llfpm10, lemma_syl_count, suffix) |>
   distinct(lemma, .keep_all = TRUE)
 
-counts2 = left_join(metadata, counts, by = 'lemma')
+counts2 = left_join(metadata, counts, by = 'lemma') |>
+  left_join(transitivity, by = 'lemma')
 
 counts2 = counts2 |>
   filter(!is.na(k))  # lemmas with no surviving hits at all after exclusions
@@ -61,4 +70,6 @@ counts2 = counts2 |>
 write_tsv(counts2, 'dat/sample_counts.tsv')
 
 cat('n lemmas in final tally:', nrow(counts2), '\n')
+cat('n lemmas with no transitivity decision (should be 0):', sum(is.na(counts2$transitive_verb)), '\n')
 print(count(counts2, suffix))
+print(count(counts2, transitive_verb))

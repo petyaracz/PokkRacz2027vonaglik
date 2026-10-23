@@ -12,6 +12,11 @@ all = read_tsv('dat/verbs.tsv')
 
 # -- counts -- #
 
+all |> 
+  mutate(class = fct_relevel(class, 'l', 'sz', 'd', 'z')) |> 
+  filter(!is.na(class)) |> 
+  count(class,ik)
+
 p1 = all |> 
   mutate(class = fct_relevel(class, 'l', 'sz', 'd', 'z')) |> 
   filter(!is.na(class)) |> 
@@ -24,10 +29,10 @@ p1 = all |>
     d  = '-od(ik)/ed(ik)/ö(dik)',
     z  = '-z(ik)'
   )) +
-  scale_fill_grey(name = 'igevégződés', labels = c(`TRUE` = 'ik', `FALSE` = '0')) +
+  scale_fill_grey(name = 'verb ending', labels = c(`TRUE` = 'ik', `FALSE` = '0')) +
   theme_bw() +
   xlab('') +
-  ylab('mennyiség (webkorpusz)')
+  ylab('counts (webcorpus)')
 
 ggsave('viz/counts.png', width = 6, height = 4, dpi = 900)
 ggsave('viz/counts.pdf', width = 6, height = 4)
