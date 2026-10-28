@@ -38,7 +38,7 @@ On the balanced 125-lemma sample (25 per suffix class), converged cleanly (max R
 |---|---|---|
 | `-lik` | 0.89 | [0.76, 0.96] |
 | `-zik` | 0.36 | [0.20, 0.56] |
-| `csak tő` | 0.36 | [0.20, 0.56] |
+| `stem only` | 0.36 | [0.20, 0.56] |
 | `-odik/edik/ödik` | 0.34 | [0.18, 0.55] |
 | `-szik` | 0.32 | [0.16, 0.54] |
 
